@@ -87,3 +87,29 @@ margin-top: 50px;
 .user {
 	background-color: black;
 }
+
+.convertor {
+	background-color: black;
+	display: flex;
+	justify-content: center;
+}
+
+.currency {
+	display: block;
+}
+
+.currency__valt {
+	margin-top: 15px;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+   -webkit-appearance: none;
+}
+
+input[type='number'],
+input[type="number"]:hover,
+input[type="number"]:focus {
+   appearance: none;
+   -moz-appearance: textfield;
+} 

@@ -62,4 +62,3 @@ tabsParent.onclick = (event) => {
 }
 
 autoTab(index)
-

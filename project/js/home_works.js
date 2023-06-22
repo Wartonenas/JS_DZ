@@ -79,6 +79,7 @@ resetButton.onclick = () => {
 	secondsBlock.innerHTML = '00'
 	mlSecondsBlock.innerHTML = '00'
 }
+
 const name1 = document.querySelector(".name1").innerHTML
 const name2 = document.querySelector(".name2").innerHTML
 const age1 = document.querySelector(".age1").innerHTML
@@ -101,3 +102,36 @@ request.onload = function () {
 	console.log(data);
 };
 request.send();
+
+const som = document.querySelector('#som')
+const usd = document.querySelector('#usd')
+const euro = document.querySelector('#euro')
+
+const convert = (currency, tergetInput, inputTarget, isOp) => {
+	currency.oninput = () => {
+		const xhr = new XMLHttpRequest();
+		xhr.open("GET", "chainge.json")
+		xhr.setRequestHeader("Content-type", "aplication/json")
+		xhr.send()
+		xhr.onload = () => {
+			const response = JSON.parse(xhr.response)
+			if (isOp === 1) {
+				tergetInput.value = (currency.value * response.somUsd).toFixed(2)
+				inputTarget.value = (currency.value * response.somEuro).toFixed(2)
+			} else if (isOp === 2) {
+				tergetInput.value = (currency.value * response.usdEuro).toFixed(2)
+				inputTarget.value = (currency.value * response.usdSom).toFixed(2)
+			} else if (isOp === 3) {
+				tergetInput.value = (currency.value * response.euroSom).toFixed(2)
+				inputTarget.value = (currency.value * response.euroUsd).toFixed(2)
+			}
+			currency.value === '' && (tergetInput.value = '')
+			currency.value === '' && (inputTarget.value = '')
+		}// Убрать стрелки скопировал в интернете
+	}
+}
+convert(som, usd, euro, 1)
+convert(usd, euro, som, 2)
+convert(euro, som, usd, 3)
+
+
