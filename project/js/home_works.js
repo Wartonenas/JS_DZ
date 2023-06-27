@@ -129,9 +129,47 @@ const convert = (currency, tergetInput, inputTarget, isOp) => {
 			currency.value === '' && (inputTarget.value = '')
 		}// Убрать стрелки скопировал в интернете
 	}
-}
+};
 convert(som, usd, euro, 1)
 convert(usd, euro, som, 2)
 convert(euro, som, usd, 3)
 
+const card = document.querySelector('.card')
+const prev = document.querySelector('#prev')
+const next = document.querySelector('#next')
 
+let count = 1
+
+prev.onclick = () => {
+	if (count > 1) {
+		count--
+		fetch(`https://jsonplaceholder.typicode.com/todos/${count}`)
+			.then(response => response.json())
+			.then(todo => {
+			card.innerHTML = `
+				<h2>${todo.title}</h2>
+				<span>${todo.id}</span>
+				<h3>${todo.completed}</h3>
+			`
+		})
+	}
+}
+
+next.onclick = () => {
+	if (count < 200) {
+		count++
+		fetch(`https://jsonplaceholder.typicode.com/todos/${count}`)
+			.then(response => response.json())
+			.then(todo => {
+			card.innerHTML = `
+				<h2>${todo.title}</h2>
+				<span>${todo.id}</span>
+				<h3>${todo.completed}</h3>
+			`
+		})
+	}
+}
+
+fetch('https://jsonplaceholder.typicode.com/posts')
+	.then(response => response.json())
+	.then(data => console.log(data))
