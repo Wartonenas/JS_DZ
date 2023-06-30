@@ -62,3 +62,33 @@ tabsParent.onclick = (event) => {
 }
 
 autoTab(index)
+
+const cityName = document.querySelector('.cityName');
+const city = document.querySelector('.city');
+const temp = document.querySelector('.temp');
+const apiKey = 'e417df62e04d3b1b111abeab19cea714';
+
+const fetchWeatherData = async (cityName) => {
+	try {
+		const response = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}`);
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.error(error);
+		return null;
+	}
+};
+
+const updateWeatherInfo = (data) => {
+	city.innerHTML = data?.name || 'Город не найден...';
+	temp.innerHTML = data?.main?.temp ? Math.round(data?.main?.temp - 273) + '&deg;C' : '...'
+};
+
+const citySearch = () => {
+	cityName.oninput = async (event) => {
+		const data = await fetchWeatherData(cityName.value);
+		updateWeatherInfo(data);
+	};
+};
+
+citySearch();

@@ -80,95 +80,95 @@ resetButton.onclick = () => {
 	mlSecondsBlock.innerHTML = '00'
 }
 
-const name1 = document.querySelector(".name1").innerHTML
-const name2 = document.querySelector(".name2").innerHTML
-const age1 = document.querySelector(".age1").innerHTML
-const age2 = document.querySelector(".age2").innerHTML
-const arrRequest = new XMLHttpRequest()
-arrRequest.open('GET', 'user.json');
-arrRequest.onload = function () {
-	const data = JSON.parse(arrRequest.responseText);
-	document.querySelector('.name1').textContent = data[0].name;
-	document.querySelector('.age1').textContent = data[0].age;
-	document.querySelector('.name2').textContent = data[1].name;
-	document.querySelector('.age2').textContent = data[1].age;
-};
-arrRequest.send(); //? Я примерно так себе это представил
+async function fetchDataAndRender() {
+	try {
+		const response = await fetch('user.json');
+		const data = await response.json();
+		document.querySelector('.name1').textContent = data[0].name;
+		document.querySelector('.age1').textContent = data[0].age;
+		document.querySelector('.name2').textContent = data[1].name;
+		document.querySelector('.age2').textContent = data[1].age;
+	} catch (error) {
+		console.log(error);
+	}
+}
 
-const request = new XMLHttpRequest();
-request.open('GET', 'user.json');
-request.onload = function () {
-   const data = JSON.parse(request.responseText);
-	console.log(data);
-};
-request.send();
+fetchDataAndRender();
 
 const som = document.querySelector('#som')
 const usd = document.querySelector('#usd')
 const euro = document.querySelector('#euro')
 
-const convert = (currency, tergetInput, inputTarget, isOp) => {
-	currency.oninput = () => {
-		const xhr = new XMLHttpRequest();
-		xhr.open("GET", "chainge.json")
-		xhr.setRequestHeader("Content-type", "aplication/json")
-		xhr.send()
-		xhr.onload = () => {
-			const response = JSON.parse(xhr.response)
+const convert = async (currency, tergetInput, inputTarget, isOp) => {
+	currency.oninput = async () => {
+		try {
+			const response = await fetch("chainge.json");
+			const data = await response.json();
+
 			if (isOp === 1) {
-				tergetInput.value = (currency.value * response.somUsd).toFixed(2)
-				inputTarget.value = (currency.value * response.somEuro).toFixed(2)
+				tergetInput.value = (currency.value * data.somUsd).toFixed(2);
+				inputTarget.value = (currency.value * data.somEuro).toFixed(2);
 			} else if (isOp === 2) {
-				tergetInput.value = (currency.value * response.usdEuro).toFixed(2)
-				inputTarget.value = (currency.value * response.usdSom).toFixed(2)
+				tergetInput.value = (currency.value * data.usdEuro).toFixed(2);
+				inputTarget.value = (currency.value * data.usdSom).toFixed(2);
 			} else if (isOp === 3) {
-				tergetInput.value = (currency.value * response.euroSom).toFixed(2)
-				inputTarget.value = (currency.value * response.euroUsd).toFixed(2)
+				tergetInput.value = (currency.value * data.euroSom).toFixed(2);
+				inputTarget.value = (currency.value * data.euroUsd).toFixed(2);
 			}
-			currency.value === '' && (tergetInput.value = '')
-			currency.value === '' && (inputTarget.value = '')
-		}// Убрать стрелки скопировал в интернете
-	}
+
+			if (currency.value === '') {
+				tergetInput.value = '';
+				inputTarget.value = '';
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
 };
-convert(som, usd, euro, 1)
-convert(usd, euro, som, 2)
-convert(euro, som, usd, 3)
+
+convert(som, usd, euro, 1);
+convert(usd, euro, som, 2);
+convert(euro, som, usd, 3);
 
 const card = document.querySelector('.card')
 const prev = document.querySelector('#prev')
 const next = document.querySelector('#next')
 
-let count = 1
+let count = 1;
 
-prev.onclick = () => {
+const fetchData = async (url) => {
+	try {
+		const response = await fetch(url);
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+const updateCard = (todo) => {
+	card.innerHTML = `
+   	<h2>${todo.title}</h2>
+   	<span>${todo.id}</span>
+   	<h3>${todo.completed}</h3>
+	`
+};
+
+prev.onclick = async () => {
 	if (count > 1) {
-		count--
-		fetch(`https://jsonplaceholder.typicode.com/todos/${count}`)
-			.then(response => response.json())
-			.then(todo => {
-			card.innerHTML = `
-				<h2>${todo.title}</h2>
-				<span>${todo.id}</span>
-				<h3>${todo.completed}</h3>
-			`
-		})
+		count--;
+		const todo = await fetchData(`https://jsonplaceholder.typicode.com/todos/${count}`);
+		updateCard(todo);
 	}
-}
+};
 
-next.onclick = () => {
+next.onclick = async () => {
 	if (count < 200) {
-		count++
-		fetch(`https://jsonplaceholder.typicode.com/todos/${count}`)
-			.then(response => response.json())
-			.then(todo => {
-			card.innerHTML = `
-				<h2>${todo.title}</h2>
-				<span>${todo.id}</span>
-				<h3>${todo.completed}</h3>
-			`
-		})
+		count++;
+		const todo = await fetchData(`https://jsonplaceholder.typicode.com/todos/${count}`);
+		updateCard(todo);
 	}
-}
+};
 
 fetch('https://jsonplaceholder.typicode.com/posts')
 	.then(response => response.json())

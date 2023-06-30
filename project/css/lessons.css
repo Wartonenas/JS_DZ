@@ -86,3 +86,14 @@
    margin-top: 50px;
 }
 
+.cityTemp {
+	background: black;
+	padding: 100px 0;
+	color: white;
+	display: flex;
+	justify-content: center;
+}
+
+.cityInfo {
+	flex-direction: column;
+}
